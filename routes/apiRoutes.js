@@ -1,27 +1,30 @@
-const router = require('express').Router();
-const store = require('../db/store');
+let data = require('../db/db.json');
+const fs = require('fs');
+const path = require('path');
 
-router.get('/notes', (req, res) => {
-    store 
-        .getNotes()
-        .then((notes) => {
-            return res.json(notes);
-        })
-        .catch((err) => res.status(500).json(err));
+module.exports = function(app) {
+    app.get('/api/notes', function(req, res){
+        let notes = JSON.parse(fs.readFileSync(path.join(__dirname, '../db/db.json')));
+    });
+
+app.post('/api/notes', function(req,res){
+    notes.push(req.body);
+    var updatedNotes = JSON.stringify(notes);
+    fs.writeFileSync('./db/db.json', updatedNotes);
+    res.json(req.body);
 });
 
-router.post('/notes', (req, res) => {
-    store
-        .addNote(req.body)
-        .then((note) => res.json(note))
-        .catch((err) => res.status(500).json(err));
-});
+    app.delete('/api/notes/:id', function(req,res){
+        var noteID = req.params.id;
+        let notes = JSON.parse(fs.readFileSync(path.join(_dirname, '../db/db.json')));
+        let index = note.findIndex( element => {
+            if (element.id === noteID) return true;
+        });
+        notes.splice(index, 1);
 
-router.delete('/notes/:id', (req, res) => {
-    store
-        .removeNote(req.params.id)
-        .then(() => res.json({ ok: true }))
-        .catch((err) => res.status(500).json(err));
-});
+        var updatedNotes = JSON.stringify(notes);
+        fs.writeFileSync('./db/db.json', updatedNotes);
 
-module.exports = router;
+        res.send('Deleting note');
+    })
+};
