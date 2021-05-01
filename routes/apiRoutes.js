@@ -26,5 +26,5 @@ app.post('/api/notes', function(req,res){
         fs.writeFileSync('./db/db.json', updatedNotes);
 
         res.send('Deleting note');
-    })
-};
+    });
+}
